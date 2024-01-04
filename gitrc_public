@@ -1,0 +1,106 @@
+# alias git=hub
+alias gst="git status"
+alias gs="git status"
+alias gash="git stash"
+alias gashu="git stash -k -u"
+alias gashpop="git stash pop"
+alias gull="git pull"
+alias gulll="git pull origin $(git rev-parse --abbrev-ref HEAD)"
+alias gullr="git pull --rebase origin master"
+alias giff="git diff HEAD"
+alias giffc="git diff HEAD --cached"
+alias gl="git log"
+alias gll="git log --graph --decorate --pretty=short --abbrev-commit"
+alias gl1="git lg1"
+alias gl2="git lg2"
+alias gl3="git lg3"
+alias gbr="git for-each-ref --sort=committerdate refs/heads/ --format='%(color:green)%(HEAD) %(color:reset)%(refname:short)%(color:reset) - %(color:green)%(committerdate:relative)%(color:reset)%(color:normal dim) - %(contents:subject) - %(authorname)%(color:reset)'"
+alias gb="gbr"
+alias gbrr="git branch"
+alias gbrd="git branch -D"
+alias gbrm="git branch --merged"
+alias gush="git push"
+alias gushf="git push -f"
+alias gushd="git push dev master"
+alias grm="git rebase master"
+alias gco="git checkout"
+alias gcob="git checkout -b"
+alias gcm="gco master"
+alias gcmn="gco master"
+alias gcb="gcob"
+alias gg="git commit -m"
+alias ggwip="gg WIP --no-verify"
+alias gwip="gad; gg WIP --no-verify"
+alias gunwip="git reset HEAD^1"
+alias gwiprbs="gwip; gcm; gull; gco -; git rebase master; gunwip; gl -3; gst"
+alias gad="git add --all ."
+gbackup() {
+  gad
+  gwip
+  gcob $1
+  gco -
+  gunwip
+}
+alias gf="giff"
+alias ga="gad"
+alias go="gco"
+alias gob="gcob"
+alias gnew="gcob"
+alias gom="gcm"
+alias gbak="gbackup"
+alias gback="gbackup"
+alias g="gs"
+alias gu="gull"
+
+alias gcv="git commit -v"
+alias gap="git add -p"
+alias grge="git merge"
+alias gmm="git merge master"
+alias grst="git reset"
+alias grst!="git reset HEAD --hard"
+alias grh="git reset HEAD^1"
+alias gga="git commit --amend --no-edit"
+alias gbrtrim="gbrm | grep -v master | xargs git branch -d"
+alias gbrtrimn="gbrm | grep -v master | xargs git branch -d"
+alias gstt="git show --name-status"
+alias grbs="gcm; gull; gco -; git rebase master; gl -3; gst"
+alias gcont="gad; git rebase --continue"
+alias gont="gad; git rebase --continue"
+alias gontinue="gad; git rebase --continue"
+alias groll="git reset --soft "
+alias gup="git standup"
+
+alias gparent="git show-branch | grep '*' | grep -v "$(git rev-parse --abbrev-ref HEAD)" | head -n1 | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//'"
+alias ggrep="git grep -C 3"
+alias gchanged="git whatchanged -p --abbrev-commit --pretty=medium"
+alias grank="git shortlog -s -n |  head -n47 | grep --color -E 'Rohan Dang|$'"
+alias gpre="gpr --express"
+alias gprune='git checkout master && comm -12 <(git branch | sed "s/ *//g") <(git remote prune origin | sed "s/^.*origin\///g") | xargs -L1 -J % git branch -D %'
+gbye() {
+  grst "$1"
+  gco "$1"
+}
+# Shorter version of this might be possible: https://www.atlassian.com/blog/git/advanced-git-aliases
+gyall() {
+  git ls-tree -r -z --name-only HEAD -- $1 | xargs -0 -n1 git blame --line-porcelain HEAD |grep  "^author "|cut -c8-|sort|uniq -c|sort -nr
+}
+
+function ci {
+    if [[ $# -eq 0 ]]
+    then
+        code .
+    else
+        code "$@"
+    fi
+}
+
+function opr() {
+  github_url=`git remote -v | awk '/fetch/{print $2}' | sed -Ee 's#(git@|git://)#https://#' -e 's@com:@com/@' -e 's%\.git$%%' | awk '/github/'`;
+  branch_name=`git symbolic-ref HEAD | cut -d"/" -f 3,4`;
+  pr_url=$github_url"/compare/master..."$branch_name
+  open $pr_url;
+}
+
+alias ..="cd .."
+alias l="ls"
+alias c="cd"
